@@ -1,3 +1,17 @@
 spring:
   application:
     name: training
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/training_db
+    username: user
+    password: pass
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
