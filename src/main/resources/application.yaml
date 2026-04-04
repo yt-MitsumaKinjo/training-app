@@ -3,7 +3,7 @@ spring:
     name: training
 
   datasource:
-    url: jdbc:mysql://localhost:3306/training_db
+    url: "jdbc:mysql://localhost:3306/training_db?useUnicode=true&serverTimezone=Asia/Tokyo"
     username: user
     password: pass
     driver-class-name: com.mysql.cj.jdbc.Driver
