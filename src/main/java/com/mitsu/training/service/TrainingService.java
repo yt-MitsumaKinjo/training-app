@@ -27,4 +27,9 @@ public class TrainingService {
     public Training save(Training training) {
         return repository.save(training);
     }
+
+    // 削除処理
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
 }

@@ -32,4 +32,20 @@ public class TrainingController {
     public Training create(@RequestBody Training training) {
         return service.save(training);
     }
+
+    // 更新API
+    // PUT http://localhost:8080/trainings/{id}
+    @PutMapping("/{id}")
+    public Training update(@PathVariable Long id, @RequestBody Training training) {
+        training.setId(id); // URLのIDをセット
+        return service.save(training);
+    }
+
+    // 削除API
+    // DELETE http://localhost:8080/trainings/{id}
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
+
 }
