@@ -16,6 +16,7 @@ services:
 
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./docker/mysql/conf.d:/etc/mysql/conf.d
 
 volumes:
   mysql_data:
