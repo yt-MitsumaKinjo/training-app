@@ -22,6 +22,11 @@ public class Training {
     // デフォルトコンストラクタ（必須）
     public Training(){}
 
+    // ID設定（PUTで必要）
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     // ID取得
     public Long getId() {
         return id;
