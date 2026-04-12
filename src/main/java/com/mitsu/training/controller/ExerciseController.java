@@ -23,6 +23,12 @@ public class ExerciseController {
         return service.findAll();
     }
 
+    // IDで取得
+    @GetMapping("/{id}")
+    public Exercise getById(@PathVariable Long id) {
+        return service.findById(id);
+    }
+
     // 登録
     @PostMapping
     public Exercise create(@RequestBody Exercise exercise) {
