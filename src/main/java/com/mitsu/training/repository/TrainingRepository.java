@@ -3,7 +3,7 @@ package com.mitsu.training.repository;
 import com.mitsu.training.entity.Training;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-// DB操作を行うインターフェース
+//Training用DB操作
 public interface TrainingRepository extends JpaRepository<Training, Long> {
 
     // JpaRepositoryを継承するだけで基本的なCRUDが使える
