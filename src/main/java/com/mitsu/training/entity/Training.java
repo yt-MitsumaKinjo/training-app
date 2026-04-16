@@ -1,8 +1,10 @@
 package com.mitsu.training.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 // トレーニング（1日の記録）
 @Entity
@@ -17,6 +19,11 @@ public class Training {
     // トレーニング日
     @Column(nullable = false) // NOT NULL制約
     private LocalDate date;
+
+    // 種目一覧（一対多）
+    @OneToMany(mappedBy = "training", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<TrainingExercise> trainingExercises;
 
     // デフォルトコンストラクタ
     public Training() {}
