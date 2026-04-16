@@ -5,6 +5,7 @@ import com.mitsu.training.repository.TrainingRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 // ビジネスロジックを扱うクラス
 @Service
@@ -21,6 +22,11 @@ public class TrainingService {
     // 全件取得
     public List<Training> findAll() {
         return repository.findAll();
+    }
+
+    // IDで取得
+    public Training findById(Long id) {
+        return repository.findById(id).orElse(null);
     }
 
     // 1件保存
