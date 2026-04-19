@@ -33,9 +33,6 @@ public class TrainingExercise {
     @JsonManagedReference
     private List<TrainingSet> trainingSets;
 
-    // 並び順（表示順）
-    @Column(name = "order_index")
-    private Integer orderIndex;
 
     //コンストラクタ(空)
     public TrainingExercise(){}
@@ -44,7 +41,6 @@ public class TrainingExercise {
     public TrainingExercise(Training training, Exercise exercise, Integer orderIndex){
         this.training = training;
         this.exercise = exercise;
-        this.orderIndex = orderIndex;
     }
 
     // getter
@@ -64,10 +60,6 @@ public class TrainingExercise {
         return trainingSets;
     }
 
-    public Integer getOrderIndex() {
-        return orderIndex;
-    }
-
     // setter
     public void setId(Long id) {
         this.id = id;
@@ -83,9 +75,5 @@ public class TrainingExercise {
 
     public void setTrainingSets(List<TrainingSet> trainingSets) {
         this.trainingSets = trainingSets;
-    }
-
-    public void setOrderIndex(Integer orderIndex) {
-        this.orderIndex = orderIndex;
     }
 }
