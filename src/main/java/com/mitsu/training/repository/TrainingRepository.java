@@ -14,10 +14,9 @@ public interface TrainingRepository extends JpaRepository<Training, Long> {
     // deleteById() → 削除
     @Query("SELECT t FROM Training t " +
             "LEFT JOIN FETCH t.trainingExercises te " +
-            "LEFT JOIN FETCH te.exercise " +
+            "LEFT JOIN FETCH te.exercise e " +
+            "LEFT JOIN FETCH e.bodyPart " +
             "LEFT JOIN FETCH te.trainingSets " +
             "WHERE t.id = :id")
     Training findByIdWithRelations(Long id);
-
-
 }

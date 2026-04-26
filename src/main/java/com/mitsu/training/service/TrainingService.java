@@ -4,6 +4,8 @@ import com.mitsu.training.entity.Training;
 import com.mitsu.training.entity.TrainingExercise;
 import com.mitsu.training.entity.TrainingSet;
 import com.mitsu.training.repository.TrainingRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,12 +40,17 @@ public class TrainingService {
     }
 
     // 一括保存
+    @PersistenceContext
+    private EntityManager em;
+
     @Transactional
     public Training saveWithRelations(Training training) {
 
         // 子がない場合はそのまま保存
         if (training.getTrainingExercises() == null) {
             Training saved = repository.save(training); // 一旦保存
+            em.flush();
+            em.clear();
             return repository.findByIdWithRelations(saved.getId()); //DBから再取得（nameなども取得）
         }
 
@@ -60,10 +67,17 @@ public class TrainingService {
 
         //保存
         Training saved = repository.save(training); //保存結果を変数に入れる(SQL:INSERT)
+        em.flush();
+        em.clear();
 
         // DBから再取得して完全な状態で返す（SQL:JOIN FECH ※exercise.nameが入る）
         return repository.findByIdWithRelations(saved.getId());
     }
+
+    public Training findByIdWithRelations(Long id) {
+        return repository.findByIdWithRelations(id);
+    }
+
 
     // 削除処理
     public void delete(Long id) {

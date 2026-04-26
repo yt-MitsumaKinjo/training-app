@@ -27,7 +27,7 @@ public class TrainingController {
     // IDで取得
     @GetMapping("/{id}")
     public Training getById(@PathVariable Long id) {
-        return service.findById(id);
+        return service.findByIdWithRelations(id);
     }
 
     // 登録
