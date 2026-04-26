@@ -37,6 +37,10 @@ public class Training {
         return date;
     }
 
+    public List<TrainingExercise> getTrainingExercises() {
+        return trainingExercises;
+    }
+
     // setter
     public void setId(Long id) {
         this.id = id;
@@ -44,5 +48,9 @@ public class Training {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public void setTrainingExercises(List<TrainingExercise> trainingExercises) {
+        this.trainingExercises = trainingExercises;
     }
 }

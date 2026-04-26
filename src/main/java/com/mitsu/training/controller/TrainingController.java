@@ -36,6 +36,12 @@ public class TrainingController {
         return service.save(training);
     }
 
+    // 一括登録（追加）
+    @PostMapping("/bulk")
+    public Training createBulk(@RequestBody Training training) {
+        return service.saveWithRelations(training);
+    }
+
     // 削除
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
