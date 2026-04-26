@@ -27,13 +27,19 @@ public class TrainingController {
     // IDで取得
     @GetMapping("/{id}")
     public Training getById(@PathVariable Long id) {
-        return service.findById(id);
+        return service.findByIdWithRelations(id);
     }
 
     // 登録
     @PostMapping
     public Training create(@RequestBody Training training) {
         return service.save(training);
+    }
+
+    // 一括登録（追加）
+    @PostMapping("/bulk")
+    public Training createBulk(@RequestBody Training training) {
+        return service.saveWithRelations(training);
     }
 
     // 削除
