@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-import java.util.List;
+import java.util.Set;
 
 
 //テーブル名を指定
@@ -31,7 +31,8 @@ public class TrainingExercise {
     // セットとの紐付け（一対多）
     @OneToMany(mappedBy = "trainingExercise", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<TrainingSet> trainingSets;
+    @OrderBy("setNumber ASC")  //セット番号順に並べる
+    private Set<TrainingSet> trainingSets;
 
 
     //コンストラクタ(空)
@@ -56,7 +57,7 @@ public class TrainingExercise {
         return exercise;
     }
 
-    public List<TrainingSet> getTrainingSets() {
+    public Set<TrainingSet> getTrainingSets() {
         return trainingSets;
     }
 
@@ -73,7 +74,7 @@ public class TrainingExercise {
         this.exercise = exercise;
     }
 
-    public void setTrainingSets(List<TrainingSet> trainingSets) {
+    public void setTrainingSets(Set<TrainingSet> trainingSets) {
         this.trainingSets = trainingSets;
     }
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 // トレーニング（1日の記録）
 @Entity
@@ -23,7 +23,8 @@ public class Training {
     // 種目一覧（一対多）
     @OneToMany(mappedBy = "training", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<TrainingExercise> trainingExercises;
+    @OrderBy("id ASC")  //Set でも順序を保証
+    private Set<TrainingExercise> trainingExercises;
 
     // デフォルトコンストラクタ
     public Training() {}
@@ -37,7 +38,7 @@ public class Training {
         return date;
     }
 
-    public List<TrainingExercise> getTrainingExercises() {
+    public Set<TrainingExercise> getTrainingExercises() {
         return trainingExercises;
     }
 
@@ -50,7 +51,7 @@ public class Training {
         this.date = date;
     }
 
-    public void setTrainingExercises(List<TrainingExercise> trainingExercises) {
+    public void setTrainingExercises(Set<TrainingExercise> trainingExercises) {
         this.trainingExercises = trainingExercises;
     }
 }
