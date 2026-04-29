@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>トレーニング詳細</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f7f7f7;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #date-title {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .exercise-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .exercise-card h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .set-row {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .back-btn {
+            display: block;
+            margin: 30px auto;
+            padding: 12px 20px;
+            font-size: 18px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>トレーニング詳細</h1>
+<div id="date-title"></div>
+
+<div id="detail-container"></div>
+
+<button class="back-btn" onclick="goBack()">← カレンダーに戻る</button>
+
+<script>
+    const container = document.getElementById("detail-container");
+
+    // -----------------------------
+    // ① 初期化
+    // -----------------------------
+    function init() {
+        const date = localStorage.getItem("selectedDate");
+
+        if (!date) {
+            document.getElementById("date-title").textContent = "日付が選択されていません";
+            container.innerHTML = "<p>日付を選択してください。</p>";
+            return;
+        }
+
+        document.getElementById("date-title").textContent = `${date} の記録`;
+
+        loadDetail(date);
+    }
+
+    // -----------------------------
+    // ② データ取得
+    // -----------------------------
+    async function loadDetail(date) {
+        try {
+            const res = await fetch(`http://localhost:8080/trainings?date=${date}`);
+            const data = await res.json();
+
+            // ⭐ 毎回リセット（これ超重要）
+            container.innerHTML = "";
+
+            // データなし
+            if (!data || data.length === 0) {
+                container.innerHTML = "<p>この日の記録はありません。</p>";
+                return;
+            }
+
+            renderDetail(data[0]);
+
+        } catch (e) {
+            console.error(e);
+            container.innerHTML = "<p>データ取得に失敗しました。</p>";
+        }
+    }
+
+    // -----------------------------
+    // ③ 表示処理
+    // -----------------------------
+    function renderDetail(training) {
+
+        if (!training.trainingExercises || training.trainingExercises.length === 0) {
+            container.innerHTML = "<p>種目データがありません。</p>";
+            return;
+        }
+
+        training.trainingExercises.forEach(te => {
+            const card = document.createElement("div");
+            card.className = "exercise-card";
+
+            card.innerHTML = `<h2>${te.exercise.name}</h2>`;
+
+            te.trainingSets.forEach(set => {
+                const row = document.createElement("div");
+                row.className = "set-row";
+                row.textContent = `${set.setNumber}セット目： ${set.weight}kg × ${set.reps}回`;
+                card.appendChild(row);
+            });
+
+            container.appendChild(card);
+        });
+    }
+
+    // -----------------------------
+    // ④ 戻る
+    // -----------------------------
+    function goBack() {
+        window.location.href = "index.html";
+    }
+
+    // -----------------------------
+    // 起動
+    // -----------------------------
+    window.onload = init;
+</script>
+
+</body>
+</html>

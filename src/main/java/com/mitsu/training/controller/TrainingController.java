@@ -33,7 +33,8 @@ public class TrainingController {
     // 登録
     @PostMapping
     public Training create(@RequestBody Training training) {
-        return service.save(training);
+        Training saved = service.save(training);
+        return service.findByIdWithRelations(saved.getId());
     }
 
     // 一括登録（追加）
