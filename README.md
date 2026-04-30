@@ -46,7 +46,7 @@
 
 ## プレビュー
 
-https://github.com/user-attachments/assets/4fa63eb5-e518-461c-a82e-d8fe14c55816./images/preview.gif
+https://github.com/user-attachments/assets/4fa63eb5-e518-461c-a82e-d8fe14c55816
 
 
 
