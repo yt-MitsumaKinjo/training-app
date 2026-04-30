@@ -112,12 +112,6 @@ https://github.com/user-attachments/assets/4fa63eb5-e518-461c-a82e-d8fe14c55816
 * TrainingExercise 1 : N TrainingSet
 * Exercise N : 1 BodyPart
 
-これにより、以下のようなデータ取得が可能：
-
-* 日付ごとのトレーニング一覧
-* 種目単位でのデータ抽出
-* セット単位での詳細情報取得
-
 ---
 
 ## 工夫した点
@@ -131,14 +125,6 @@ https://github.com/user-attachments/assets/4fa63eb5-e518-461c-a82e-d8fe14c55816
 
 * リレーション構造の設計とデータの整合性維持
 * Lazyロードによるデータ取得問題への対応
-
----
-
-## 今後の改善点
-
-* トレーニング編集機能（Update）
-* 種目ごとの重量履歴取得API
-* データ分析機能（グラフ表示など）
 
 ---
 
