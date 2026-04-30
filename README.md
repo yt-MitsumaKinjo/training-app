@@ -63,7 +63,7 @@ https://github.com/user-attachments/assets/4fa63eb5-e518-461c-a82e-d8fe14c55816
 
 ### フロントエンド
 
-* HTML / CSS / JavaScript（最小構成）
+* HTML / CSS / JavaScript
 
 ### データベース
 
