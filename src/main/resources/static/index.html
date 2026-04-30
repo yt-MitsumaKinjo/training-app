@@ -4,98 +4,118 @@
     <meta charset="UTF-8">
     <title>トレーニング管理 - カレンダー</title>
 
-    <!-- flatpickr（カレンダー）CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <style>
         body {
             font-family: Arial, sans-serif;
+            background: #f5f6f8;
             padding: 20px;
         }
 
         h1 {
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
         #selected-date {
             font-size: 18px;
-            margin: 10px 0;
             font-weight: bold;
         }
 
         .button-area {
-            margin-top: 20px;
+            display: flex;
+            gap: 10px;
         }
 
         button {
-            padding: 10px 20px;
-            margin-right: 10px;
+            flex: 1;
+            padding: 12px;
             font-size: 16px;
+            border: none;
+            border-radius: 8px;
             cursor: pointer;
         }
 
-        /* 記録がある日のマーク */
+        #btn-record {
+            background: #4CAF50;
+            color: white;
+        }
+
+        #btn-detail {
+            background: #2196F3;
+            color: white;
+        }
+
+        #btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
         .has-training {
             background-color: #ffe4b5 !important;
             border-radius: 50%;
         }
     </style>
 </head>
+
 <body>
 
 <h1>トレーニングカレンダー</h1>
 
-<!-- カレンダー -->
-<input id="calendar" />
+<div class="card">
+    <input id="calendar">
+</div>
 
-<!-- 選択中の日付 -->
-<div id="selected-date">選択中の日付：なし</div>
+<div class="card">
+    <div id="selected-date">選択中の日付：なし</div>
+</div>
 
-<!-- ボタン -->
-<div class="button-area">
+<div class="card button-area">
     <button id="btn-record">トレーニング記録</button>
-    <button id="btn-detail">トレーニング詳細</button>
-    <button id="btn-delete">トレーニング削除</button>
+    <button id="btn-detail">詳細</button>
+    <button id="btn-delete">削除</button>
 </div>
 
 <script>
     let selectedDate = null;
-    let trainingDates = []; // 記録がある日付一覧
+    let trainingDates = [];
 
     // -----------------------------
-    // ① 記録がある日付を取得
-    // -----------------------------
-    async function loadTrainingDates() {
-        try {
-            const res = await fetch("http://localhost:8080/trainings");
-            const data = await res.json();
-
-            trainingDates = data.map(t => t.date);
-
-            calendar.set("onDayCreate", highlightTrainingDays);
-            calendar.redraw();
-        } catch (e) {
-            console.log("バックエンドが動いていないため、ダミーデータを使用します");
-            trainingDates = ["2026-04-20", "2026-04-22"];
-        }
-    }
-
-    // -----------------------------
-    // ② 記録がある日付にマーク
+    // 日付マーク
     // -----------------------------
     function highlightTrainingDays(dObj, dStr, fp, dayElem) {
-        const dateStr = dayElem.dateObj.toISOString().split("T")[0];
-        if (trainingDates.includes(dateStr)) {
+
+        const d = dayElem.dateObj;
+
+        const y = d.getFullYear();
+        const m = d.getMonth() + 1;
+        const day = d.getDate();
+
+        const match = trainingDates.some(t => {
+            const [ty, tm, td] = t.split("-").map(Number);
+            return ty === y && tm === m && td === day;
+        });
+
+        if (match) {
             dayElem.classList.add("has-training");
         }
     }
 
     // -----------------------------
-    // ③ カレンダー初期化
+    // カレンダー
     // -----------------------------
     const calendar = flatpickr("#calendar", {
         dateFormat: "Y-m-d",
+        onDayCreate: highlightTrainingDays,
         onChange: function(selectedDates, dateStr) {
             selectedDate = dateStr;
             document.getElementById("selected-date").textContent =
@@ -103,13 +123,28 @@
         }
     });
 
+    // -----------------------------
+    // データ取得
+    // -----------------------------
+    async function loadTrainingDates() {
+        try {
+            const res = await fetch("http://localhost:8080/trainings");
+            const data = await res.json();
+
+            trainingDates = data.map(t => t.date);
+            calendar.redraw();
+
+        } catch (e) {
+            trainingDates = ["2026-04-20", "2026-04-22"];
+            calendar.redraw();
+        }
+    }
+
     loadTrainingDates();
 
     // -----------------------------
-    // ④ ボタン動作
+    // ボタン：記録
     // -----------------------------
-
-    // ★★★ 画面②へ遷移（localStorage で日付を渡す）★★★
     document.getElementById("btn-record").onclick = () => {
         if (!selectedDate) return alert("日付を選択してください");
 
@@ -117,24 +152,58 @@
         window.location.href = "select-exercise.html";
     };
 
-    // ★★★ 詳細表示（detail.html へ遷移）★★★
+    // -----------------------------
+    // ボタン：詳細
+    // -----------------------------
     document.getElementById("btn-detail").onclick = () => {
         if (!selectedDate) return alert("日付を選択してください");
 
-        // 日付を保存
         localStorage.setItem("selectedDate", selectedDate);
-
-        // 詳細画面へ遷移
         window.location.href = "detail.html";
     };
 
+    // -----------------------------
+    // ★ 削除
+    // -----------------------------
     document.getElementById("btn-delete").onclick = async () => {
+
         if (!selectedDate) return alert("日付を選択してください");
 
         const confirmDelete = confirm(selectedDate + " の記録を削除しますか？");
         if (!confirmDelete) return;
 
-        alert("削除APIを呼ぶ想定（実装は後でOK）");
+        try {
+            // ① 日付で取得
+            const res = await fetch(`http://localhost:8080/trainings?date=${selectedDate}`);
+            const trainings = await res.json();
+
+            if (trainings.length === 0) {
+                return alert("この日に記録はありません");
+            }
+
+            // ② IDごと削除
+            for (const t of trainings) {
+                await fetch(`http://localhost:8080/trainings/${t.id}`, {
+                    method: "DELETE"
+                });
+            }
+
+            alert("削除しました");
+
+            // ③ 再取得（←これで印も消える）
+            await loadTrainingDates();
+
+            // ④ UIリセット
+            selectedDate = null;
+            document.getElementById("selected-date").textContent =
+                "選択中の日付：なし";
+
+            calendar.clear();
+
+        } catch (e) {
+            console.error(e);
+            alert("削除失敗");
+        }
     };
 </script>
 

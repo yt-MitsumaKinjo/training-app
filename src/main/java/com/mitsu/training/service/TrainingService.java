@@ -9,6 +9,7 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +33,10 @@ public class TrainingService {
     // IDで取得
     public Training findById(Long id) {
         return repository.findById(id).orElse(null);
+    }
+
+    public List<Training> findByDate(String date) {
+        return repository.findByDateWithRelations(LocalDate.parse(date));
     }
 
     // 1件保存

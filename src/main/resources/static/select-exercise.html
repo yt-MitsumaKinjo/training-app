@@ -6,160 +6,199 @@
 
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #f5f6f8;
+        padding: 20px;
     }
 
+    /* タイトル */
     h1 {
-      margin-bottom: 20px;
+        margin-bottom: 20px;
     }
 
+    /* カード */
+    .card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    /* 選択中エリア */
     .selected-box {
-      background: #e8f4ff;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
     }
 
+    /* 選択チップ */
+    .chip {
+        background: #007bff;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+    }
+
+    /* アコーディオン */
     .accordion {
-      background: #f0f0f0;
-      padding: 12px;
-      cursor: pointer;
-      border-radius: 6px;
-      margin-top: 10px;
-      font-size: 18px;
-      font-weight: bold;
+        background: #e9ecef;
+        padding: 15px;
+        cursor: pointer;
+        border-radius: 8px;
+        margin-top: 10px;
+        font-size: 18px;
+        font-weight: bold;
     }
 
+    /* 展開部分 */
     .panel {
-      display: none;
-      padding: 10px 15px;
-      background: #fafafa;
-      border-left: 3px solid #007bff;
-      margin-bottom: 10px;
+        display: none;
+        padding: 10px;
     }
 
+    /* 種目ボタン化 */
     .exercise-item {
-      margin: 5px 0;
+        padding: 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-bottom: 5px;
+        background: #f8f9fa;
+        transition: 0.2s;
     }
 
+    .exercise-item:hover {
+        background: #e2e6ea;
+    }
+
+    /* 選択状態 */
+    .exercise-item.active {
+        background: #007bff;
+        color: white;
+    }
+
+    /* 次へボタン */
     #next-btn {
-      margin-top: 30px;
-      padding: 12px 20px;
-      font-size: 18px;
-      cursor: pointer;
+        width: 100%;
+        padding: 15px;
+        font-size: 18px;
+        border: none;
+        border-radius: 10px;
+        background: #28a745;
+        color: white;
+        cursor: pointer;
     }
   </style>
 </head>
+
 <body>
 
 <h1>種目選択</h1>
 
-<!-- 選択中の種目一覧 -->
-<div class="selected-box">
+<!-- 選択中 -->
+<div class="card">
   <strong>選択中の種目：</strong>
-  <div id="selected-list">なし</div>
+  <div id="selected-list" class="selected-box"></div>
 </div>
 
-<!-- 部位ごとのアコーディオン -->
-<div id="accordion-container"></div>
+<!-- アコーディオン -->
+<div id="accordion-container" class="card"></div>
 
-<button id="next-btn">トレーニング追加（画面③へ）</button>
+<button id="next-btn">トレーニング追加</button>
 
 <script>
   let bodyParts = [];
   let selectedExercises = [];
 
-  // -----------------------------
-  // ① /bodyparts を取得
-  // -----------------------------
+  // データ取得
   async function loadData() {
-    const res = await fetch("http://localhost:8080/bodyparts");
-    bodyParts = await res.json();
-    renderAccordion();
+      const res = await fetch("http://localhost:8080/bodyparts");
+      bodyParts = await res.json();
+      renderAccordion();
   }
 
-  // -----------------------------
-  // ② アコーディオン表示
-  // -----------------------------
+  // 描画
   function renderAccordion() {
-    const container = document.getElementById("accordion-container");
-    container.innerHTML = "";
+      const container = document.getElementById("accordion-container");
+      container.innerHTML = "";
 
-    bodyParts.forEach(bp => {
-      const acc = document.createElement("div");
-      acc.className = "accordion";
-      acc.textContent = bp.name;
-      acc.onclick = () => togglePanel(bp.id);
+      bodyParts.forEach(bp => {
 
-      const panel = document.createElement("div");
-      panel.className = "panel";
-      panel.id = `panel-${bp.id}`;
+          const acc = document.createElement("div");
+          acc.className = "accordion";
+          acc.textContent = bp.name;
+          acc.onclick = () => togglePanel(bp.id);
 
-      bp.exercises.forEach(ex => {
-        const div = document.createElement("div");
-        div.className = "exercise-item";
+          const panel = document.createElement("div");
+          panel.className = "panel";
+          panel.id = `panel-${bp.id}`;
 
-        div.innerHTML = `
-          <label>
-            <input type="checkbox" value="${ex.id}" onchange="toggleExercise(${ex.id}, '${ex.name}')">
-            ${ex.name}
-          </label>
-        `;
+          bp.exercises.forEach(ex => {
 
-        panel.appendChild(div);
+              const div = document.createElement("div");
+              div.className = "exercise-item";
+              div.textContent = ex.name;
+
+              div.onclick = () => toggleExercise(ex.id, ex.name, div);
+
+              panel.appendChild(div);
+          });
+
+          container.appendChild(acc);
+          container.appendChild(panel);
       });
-
-      container.appendChild(acc);
-      container.appendChild(panel);
-    });
   }
 
-  // -----------------------------
-  // ③ アコーディオン開閉
-  // -----------------------------
+  // 開閉
   function togglePanel(id) {
-    const panel = document.getElementById(`panel-${id}`);
-    panel.style.display = panel.style.display === "block" ? "none" : "block";
+      const panel = document.getElementById(`panel-${id}`);
+      panel.style.display = panel.style.display === "block" ? "none" : "block";
   }
 
-  // -----------------------------
-  // ④ 種目選択管理
-  // -----------------------------
-  function toggleExercise(id, name) {
-    if (selectedExercises.some(e => e.id === id)) {
-      selectedExercises = selectedExercises.filter(e => e.id !== id);
-    } else {
-      selectedExercises.push({ id, name });
-    }
-    updateSelectedList();
+  // 選択
+  function toggleExercise(id, name, element) {
+
+      if (selectedExercises.some(e => e.id === id)) {
+          selectedExercises = selectedExercises.filter(e => e.id !== id);
+          element.classList.remove("active");
+      } else {
+          selectedExercises.push({ id, name });
+          element.classList.add("active");
+      }
+
+      updateSelectedList();
   }
 
-  // -----------------------------
-  // ⑤ 選択中リスト更新
-  // -----------------------------
+  // 選択リスト
   function updateSelectedList() {
-    const list = document.getElementById("selected-list");
+      const list = document.getElementById("selected-list");
+      list.innerHTML = "";
 
-    if (selectedExercises.length === 0) {
-      list.textContent = "なし";
-      return;
-    }
+      if (selectedExercises.length === 0) {
+          list.textContent = "なし";
+          return;
+      }
 
-    list.textContent = selectedExercises.map(e => e.name).join("、");
+      selectedExercises.forEach(e => {
+          const chip = document.createElement("div");
+          chip.className = "chip";
+          chip.textContent = e.name;
+          list.appendChild(chip);
+      });
   }
 
-  // -----------------------------
-  // ⑥ 次へ（画面③へ）
-  // -----------------------------
+  // 次へ
   document.getElementById("next-btn").onclick = () => {
-    if (selectedExercises.length === 0) {
-      alert("種目を1つ以上選択してください");
-      return;
-    }
+      if (selectedExercises.length === 0) {
+          alert("種目を1つ以上選択してください");
+          return;
+      }
 
-    localStorage.setItem("selectedExercises", JSON.stringify(selectedExercises.map(e => e.id)));
-    window.location.href = "record-set.html";
+      localStorage.setItem("selectedExercises",
+          JSON.stringify(selectedExercises.map(e => e.id)));
+
+      window.location.href = "record-set.html";
   };
 
   loadData();
@@ -167,4 +206,3 @@
 
 </body>
 </html>
-

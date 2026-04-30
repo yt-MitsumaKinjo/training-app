@@ -20,7 +20,15 @@ public class TrainingController {
 
     // 一覧取得
     @GetMapping
-    public List<Training> getAll() {
+    public List<Training> getAll(@RequestParam(required = false) String date) {
+
+        // dateが指定されている場合（例：?date=2026-04-11）
+        if (date != null && !date.isEmpty()) {
+            // 日付で絞り込んで取得
+            return service.findByDate(date);
+        }
+
+        // dateがない場合は全件取得
         return service.findAll();
     }
 
